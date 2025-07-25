@@ -19,12 +19,12 @@ func generateRandomElements(size int) []int {
 		size = 0
 	}
 	slice := make([]int, size)
-	if size <= 0 {
-		return slice
-	}
-	max := size * 10
+	//	if size == 0 {
+	//		return slice
+	//	}
+	// не ожидал, что for i := range slice корректно отработает с нулевым слайсом
 	for i := range slice {
-		slice[i] = rand.Intn(max)
+		slice[i] = rand.Int()
 	}
 	return slice
 }
@@ -35,7 +35,7 @@ func maximum(data []int) int {
 	if len(data) == 0 {
 		return 0
 	}
-	max := 0
+	max := data[0]
 	for i := range data {
 		if data[i] > max {
 			max = data[i]
@@ -51,19 +51,16 @@ func maxChunks(data []int) int {
 	maxChunks := SIZE / CHUNKS
 
 	var wg sync.WaitGroup
-	var mu sync.Mutex
 
 	wg.Add(CHUNKS)
 	for i := 0; i < CHUNKS; i++ {
 		index := i * maxChunks
 		chunk := data[index : index+maxChunks]
-		go func(ch []int) {
+		go func(i int, ch []int) {
 			defer wg.Done()
 			m := maximum(ch)
-			mu.Lock()
-			chunks = append(chunks, m)
-			mu.Unlock()
-		}(chunk)
+			chunks[i] = m
+		}(i, chunk)
 	}
 	wg.Wait()
 
