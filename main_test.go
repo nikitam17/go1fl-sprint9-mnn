@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 )
 
 // Пишите тесты в этом файле
@@ -21,32 +21,21 @@ func TestGenerateRandomElements(t *testing.T) {
 	}
 	for _, v := range requests {
 		slice := generateRandomElements(v.count)
-		require.Equal(t, v.want, len(slice))
+		assert.Equal(t, v.want, len(slice))
 	}
 }
 
 // test maximum returns the maximum number of elements.
 func TestMaximum(t *testing.T) {
 	requests := []struct {
-		count  int // передаваемое значение
-		want   int // ожидаемое количество в ответе
+		want   int // ожидаемый max
 		slices []int
 	}{
-		{0, 0, nil},
-		{1, 1, []int{1}},
-		{10, 20, []int{1, 3, 5, 3, 7, 20, 9, 4, 6, 2}},
+		{0, nil},
+		{10, []int{10}},
+		{20, []int{1, 3, 5, 3, 7, 20, 9, 4, 6, 2}},
 	}
 	for _, v := range requests {
-		slice := generateRandomElements(v.count)
-		max := maximum(slice)
-		switch v.want {
-		case 0:
-			require.Equal(t, v.want, max)
-		case 1:
-			require.Equal(t, slice[0], max)
-		case 10:
-			max = maximum(v.slices)
-			require.Equal(t, v.want, max)
-		}
+		assert.Equal(t, v.want, maximum(v.slices))
 	}
 }

@@ -16,13 +16,9 @@ const (
 func generateRandomElements(size int) []int {
 	// ваш код здесь
 	if size < 0 {
-		size = 0
+		return nil
 	}
 	slice := make([]int, size)
-	//	if size == 0 {
-	//		return slice
-	//	}
-	// не ожидал, что for i := range slice корректно отработает с нулевым слайсом
 	for i := range slice {
 		slice[i] = rand.Int()
 	}
@@ -36,9 +32,9 @@ func maximum(data []int) int {
 		return 0
 	}
 	max := data[0]
-	for i := range data {
-		if data[i] > max {
-			max = data[i]
+	for _, v := range data {
+		if v > max {
+			max = v
 		}
 	}
 	return max
@@ -48,24 +44,22 @@ func maximum(data []int) int {
 func maxChunks(data []int) int {
 	// ваш код здесь
 	chunks := make([]int, CHUNKS)
-	maxChunks := SIZE / CHUNKS
+	maxCh := (SIZE + CHUNKS - 1) / CHUNKS
 
 	var wg sync.WaitGroup
 
 	wg.Add(CHUNKS)
 	for i := 0; i < CHUNKS; i++ {
-		index := i * maxChunks
-		chunk := data[index : index+maxChunks]
+		index := i * maxCh
+		chunk := data[index : index+maxCh]
 		go func(i int, ch []int) {
 			defer wg.Done()
-			m := maximum(ch)
-			chunks[i] = m
+			chunks[i] = maximum(ch)
 		}(i, chunk)
 	}
 	wg.Wait()
 
-	max := maximum(chunks)
-	return max
+	return maximum(chunks)
 }
 
 func main() {
