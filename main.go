@@ -43,14 +43,22 @@ func maximum(data []int) int {
 // maxChunks returns the maximum number of elements in a chunks.
 func maxChunks(data []int) int {
 	// ваш код здесь
+	l := len(data)
+	if l < CHUNKS {
+		return maximum(data)
+	}
 	chunks := make([]int, CHUNKS)
-	maxCh := (SIZE + CHUNKS - 1) / CHUNKS
-
+	offSet := l % CHUNKS
+	maxCh := l / CHUNKS
 	var wg sync.WaitGroup
 
 	wg.Add(CHUNKS)
 	for i := 0; i < CHUNKS; i++ {
 		index := i * maxCh
+		if offSet != 0 && i == CHUNKS-1 {
+			// в последний chunk добавляем оставшиеся элементы слайса
+			maxCh += offSet
+		}
 		chunk := data[index : index+maxCh]
 		go func(i int, ch []int) {
 			defer wg.Done()
